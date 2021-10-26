@@ -1,0 +1,496 @@
+library(faraway)
+library(lme4)
+library(car)
+library(lmerTest)
+library(dplyr)
+library(doBy)
+
+# random effects: https://ourcodingclub.github.io/tutorials/mixed-models/
+# nice explaination: https://mfviz.com/hierarchical-models/
+
+all_measures_per_participant <- read.csv("~/Desktop/Loic/Thesis_new/4_analysis/eyetracking_analysis/all_measures_per_participant_patche3.csv", comment.char="#")
+
+all_measures_per_participant <- within(all_measures_per_participant, {
+  # mask <- factor(mask_num)
+  # sound <- factor(sound_num)
+  mask <- factor(mask)
+  sound <- factor(Sound)
+  pid <- factor(PID)
+  # ScoreMemTest <- factor(ScoreMemTest)
+  # MemConfidence <- factor(MemConfidence)
+  # ScoreCompTest <- factor(ScoreCompTest)
+  # CompConfidence <- factor(CompConfidence)
+  # PostSpeakerIdent <- factor(PostSpeakerIdent)
+  # PostOverallComprehension <- factor(PostOverallComprehension)
+  # PostConcentration <- factor(PostConcentration)
+  # PostPresence <- factor(PostPresence)
+  # PostAudioHelp <- factor(PostAudioHelp)
+  # nb_fixation <- factor(nb_fixation)
+  # mean_fix_duration <- factor(mean_fix_duration)
+  # total_fix_duration <- factor(total_fix_duration)
+  # mean_saccade_amplitude <- factor(mean_saccade_amplitude)
+  # mean_dissimilarity <- factor(mean_dissimilarity)
+  # ratio_aoi_transitions <- factor(ratio_aoi_transitions)
+})
+par(cex = .6)
+
+## does not work
+# lmm_test <- function(test_var) {
+#   test_var <- noquote(test_var)
+#   with(all_measures_per_participant, interaction.plot(mask, sound, test_var,
+#                                                       ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+#                                                       ylab = "mean", xlab = "mask", trace.label = "sound"))
+#   
+#   summaryBy(test_var ~ mask, data = all_measures_per_participant, 
+#             FUN = list(mean, max, min, median, sd))
+#   
+#   summaryBy(test_var ~ sound, data = all_measures_per_participant, 
+#             FUN = list(mean, max, min, median, sd))
+#   
+#   summaryBy(test_var ~ mask+sound, data = all_measures_per_participant, 
+#             FUN = list(mean, max, min, median, sd))
+#   
+#   lmm_test_var <- lmer(test_var ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+#   summary(glm_test_var)
+#   anova(glm_test_var)
+# }
+
+# ScoreMemTest
+with(all_measures_per_participant, interaction.plot(mask, sound, ScoreMemTest,
+                             ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                             ylab = "mean of ScoreMemTest", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(ScoreMemTest ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(ScoreMemTest ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(ScoreMemTest ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_ScoreMemTest <- lmer(ScoreMemTest ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+summary(lmm_ScoreMemTest)
+AIC(lmm_ScoreMemTest)
+BIC(lmm_ScoreMemTest)
+anova(lmm_ScoreMemTest)
+
+# account in both random slope and random intercept - higher AIC/BIC -> not a better fit
+lmm_ScoreMemTest2 <- lmer(ScoreMemTest ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+summary(lmm_ScoreMemTest2)
+AIC(lmm_ScoreMemTest2)
+BIC(lmm_ScoreMemTest2)
+anova(lmm_ScoreMemTest2)
+
+
+# MemConfidence
+with(all_measures_per_participant, interaction.plot(mask, sound, MemConfidence,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of MemConfidence", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(MemConfidence ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(MemConfidence ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(MemConfidence ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_MemConfidence <- lmer(MemConfidence ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+AIC(lmm_MemConfidence)
+BIC(lmm_MemConfidence)
+summary(lmm_MemConfidence)
+anova(lmm_MemConfidence)
+
+# worse AIC/BIC
+lmm_MemConfidence2 <- lmer(MemConfidence ~ mask * sound + (1 + sound | pid) + (1 + mask | pid), data = all_measures_per_participant)
+AIC(lmm_MemConfidence2)
+BIC(lmm_MemConfidence2)
+summary(lmm_MemConfidence2)
+anova(lmm_MemConfidence2)
+
+# ScoreCompTest 
+with(all_measures_per_participant, interaction.plot(mask, sound, ScoreCompTest,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of ScoreCompTest", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(ScoreCompTest ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(ScoreCompTest ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(ScoreCompTest ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_ScoreCompTest <- lmer(ScoreCompTest ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_ScoreCompTest)
+AIC(lmm_ScoreCompTest)
+BIC(lmm_ScoreCompTest)
+summary(lmm_ScoreCompTest)
+
+
+## not better in terms of AIC/BIC
+# lmm_ScoreCompTest2 <- lmer(ScoreCompTest ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_ScoreCompTest2)
+# BIC(lmm_ScoreCompTest2)
+# summary(lmm_ScoreCompTest2)
+# anova(lmm_ScoreCompTest2)
+
+
+# CompConfidence
+with(all_measures_per_participant, interaction.plot(mask, sound, CompConfidence,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of CompConfidence", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(CompConfidence ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(CompConfidence ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(CompConfidence ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_CompConfidence <- lmer(CompConfidence ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_CompConfidence)
+AIC(lmm_CompConfidence)
+BIC(lmm_CompConfidence)
+summary(lmm_CompConfidence)
+
+
+# # worse AIC/BIC
+# lmm_CompConfidence2 <- lmer(CompConfidence ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_CompConfidence2)
+# BIC(lmm_CompConfidence2)
+# summary(lmm_CompConfidence2)
+# anova(lmm_CompConfidence2)
+
+
+# PostSpeakerIdent
+with(all_measures_per_participant, interaction.plot(mask, sound, PostSpeakerIdent,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of PostSpeakerIdent", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(PostSpeakerIdent ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostSpeakerIdent ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostSpeakerIdent ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_PostSpeakerIdent <- lmer(PostSpeakerIdent ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+AIC(lmm_PostSpeakerIdent)
+BIC(lmm_PostSpeakerIdent)
+summary(lmm_PostSpeakerIdent)
+anova(lmm_PostSpeakerIdent)
+
+# # worse AIC/BIC
+# lmm_PostSpeakerIden2 <- lmer(PostSpeakerIdent ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_PostSpeakerIden2)
+# BIC(lmm_PostSpeakerIden2)
+# summary(lmm_PostSpeakerIden2)
+# anova(lmm_PostSpeakerIden2)
+
+
+# PostOverallComprehension
+with(all_measures_per_participant, interaction.plot(mask, sound, PostOverallComprehension,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of PostOverallComprehension", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(PostOverallComprehension ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostOverallComprehension ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostOverallComprehension ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_PostOverallComprehension <- lmer(PostOverallComprehension ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+AIC(lmm_PostOverallComprehension)
+BIC(lmm_PostOverallComprehension)
+summary(lmm_PostOverallComprehension)
+anova(lmm_PostOverallComprehension)
+
+# # worse AIC/BIC
+# lmm_PostOverallComprehension2 <- lmer(PostOverallComprehension ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_PostOverallComprehension2)
+# BIC(lmm_PostOverallComprehension2)
+# summary(lmm_PostOverallComprehension2)
+# anova(lmm_PostOverallComprehension2)
+
+# PostConcentration 
+with(all_measures_per_participant, interaction.plot(mask, sound, PostConcentration,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of PostConcentration", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(PostConcentration ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostConcentration ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostConcentration ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_PostConcentration <- lmer(PostConcentration ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+AIC(lmm_PostConcentration)
+BIC(lmm_PostConcentration)
+summary(lmm_PostConcentration)
+anova(lmm_PostConcentration)
+
+# # worse AIC/BIC
+# lmm_PostConcentration2 <- lmer(PostConcentration ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_PostConcentration2)
+# BIC(lmm_PostConcentration2)
+# summary(lmm_PostConcentration2)
+# anova(lmm_PostConcentration2)
+
+# PostPresence 
+with(all_measures_per_participant, interaction.plot(mask, sound, PostPresence,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of PostPresence", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(PostPresence ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostPresence ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostPresence ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_PostPresence <- lmer(PostPresence ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+AIC(lmm_PostPresence)
+BIC(lmm_PostPresence)
+summary(lmm_PostPresence)
+anova(lmm_PostPresence)
+
+# # worse AIC/BIC
+# lmm_PostPresence2 <- lmer(PostPresence ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_PostPresence2)
+# BIC(lmm_PostPresence2)
+# summary(lmm_PostPresence2)
+# anova(lmm_PostPresence2)
+
+# PostAudioHelp 
+with(all_measures_per_participant, interaction.plot(mask, sound, PostAudioHelp,
+                                                    ylim = c(0, 6), lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of PostAudioHelp", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(PostAudioHelp ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostAudioHelp ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(PostAudioHelp ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_PostAudioHelp <- lmer(PostAudioHelp ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+AIC(lmm_PostAudioHelp)
+BIC(lmm_PostAudioHelp)
+summary(lmm_PostAudioHelp)
+anova(lmm_PostAudioHelp)
+
+# worse AIC/BIC
+# lmm_PostAudioHelp2 <- lmer(PostAudioHelp ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_PostAudioHelp2)
+# BIC(lmm_PostAudioHelp2)
+# summary(lmm_PostAudioHelp2)
+# anova(lmm_PostAudioHelp2)
+
+
+# nb_fixation 
+with(all_measures_per_participant, interaction.plot(mask, sound, nb_fixation,
+                                                    lwd = 3, col = 1:3,
+                                                    ylab = "mean of nb_fixation", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(nb_fixation ~ mask, data = all_measures_per_participant, 
+           FUN = list(mean, max, min, median, sd))
+
+summaryBy(nb_fixation ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+# summaryBy(nb_fixation ~ mask+sound, data = all_measures_per_participant, 
+#           FUN = list(mean, max, min, median, sd))
+summaryBy(nb_fixation ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean))
+
+lmm_nb_fixation <- lmer(nb_fixation ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_nb_fixation)
+AIC(lmm_nb_fixation)
+BIC(lmm_nb_fixation)
+summary(lmm_nb_fixation)
+
+
+# worse AIC/BIC
+# lmm_nb_fixation2 <- lmer(nb_fixation ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_nb_fixation2)
+# BIC(lmm_nb_fixation2)
+# summary(lmm_nb_fixation2)
+# anova(lmm_nb_fixation2)
+
+# mean_fix_duration 
+with(all_measures_per_participant, interaction.plot(mask, sound, mean_fix_duration,
+                                                     lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of mean_fix_duration", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(mean_fix_duration ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(mean_fix_duration ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(mean_fix_duration ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_mean_fix_duration <- lmer(mean_fix_duration ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_mean_fix_duration)
+AIC(lmm_mean_fix_duration)
+BIC(lmm_mean_fix_duration)
+summary(lmm_mean_fix_duration)
+
+
+# worse AIC/BIC
+# lmm_mean_fix_duration2 <- lmer(mean_fix_duration ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_mean_fix_duration2)
+# BIC(lmm_mean_fix_duration2)
+# summary(lmm_mean_fix_duration2)
+# anova(lmm_mean_fix_duration2)
+
+
+
+
+# total_fix_duration
+with(all_measures_per_participant, interaction.plot(mask, sound, total_fix_duration,
+                                                     lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of total_fix_duration", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(total_fix_duration ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(total_fix_duration ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(total_fix_duration ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_total_fix_duration <- lmer(total_fix_duration ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_total_fix_duration)
+AIC(lmm_total_fix_duration)
+BIC(lmm_total_fix_duration)
+summary(lmm_total_fix_duration)
+
+
+# worse AIC/BIC
+# lmm_total_fix_duration2 <- lmer(total_fix_duration ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_total_fix_duration2)
+# BIC(lmm_total_fix_duration2)
+# summary(lmm_total_fix_duration2)
+# anova(lmm_total_fix_duration2)
+
+# mean_saccade_amplitude 
+with(all_measures_per_participant, interaction.plot(mask, sound, mean_saccade_amplitude,
+                                                    lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of mean_saccade_amplitude", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(mean_saccade_amplitude ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(mean_saccade_amplitude ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(mean_saccade_amplitude ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_mean_saccade_amplitude <- lmer(mean_saccade_amplitude ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_mean_saccade_amplitude)
+AIC(lmm_mean_saccade_amplitude)
+BIC(lmm_mean_saccade_amplitude)
+summary(lmm_mean_saccade_amplitude)
+
+
+# worse AIC/BIC
+# lmm_mean_saccade_amplitude2 <- lmer(mean_saccade_amplitude ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_mean_saccade_amplitude2)
+# BIC(lmm_mean_saccade_amplitude2)
+# summary(lmm_mean_saccade_amplitude2)
+# anova(lmm_mean_saccade_amplitude2)
+
+# mean_dissimilarity 
+with(all_measures_per_participant, interaction.plot(mask, sound, mean_dissimilarity,
+                                                    lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of mean_dissimilarity", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(mean_dissimilarity ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(mean_dissimilarity ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(mean_dissimilarity ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_mean_dissimilarity <- lmer(mean_dissimilarity ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_mean_dissimilarity)
+AIC(lmm_mean_dissimilarity)
+BIC(lmm_mean_dissimilarity)
+summary(lmm_mean_dissimilarity)
+
+
+# worse AIC/BIC
+# lmm_mean_dissimilarity2 <- lmer(mean_dissimilarity ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_mean_dissimilarity2)
+# BIC(lmm_mean_dissimilarity2)
+# summary(lmm_mean_dissimilarity2)
+# anova(lmm_mean_dissimilarity2)
+
+# ratio_aoi_transitions 
+with(all_measures_per_participant, interaction.plot(mask, sound, ratio_aoi_transitions,
+                                                     lty= c(1, 12), lwd = 3, col = 1:3,
+                                                    ylab = "mean of ratio_aoi_transitions", xlab = "mask", trace.label = "sound"))
+
+
+summaryBy(ratio_aoi_transitions ~ mask, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(ratio_aoi_transitions ~ sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+summaryBy(ratio_aoi_transitions ~ mask+sound, data = all_measures_per_participant, 
+          FUN = list(mean, max, min, median, sd))
+
+lmm_ratio_aoi_transitions <- lmer(ratio_aoi_transitions ~ mask * sound + (1 | pid), data = all_measures_per_participant)
+anova(lmm_ratio_aoi_transitions)
+AIC(lmm_ratio_aoi_transitions)
+BIC(lmm_ratio_aoi_transitions)
+summary(lmm_ratio_aoi_transitions)
+
+
+## not better when factoring in sound as random effect slope: higher AIC/BIC
+# lmm_ratio_aoi_transitions2 <- lmer(ratio_aoi_transitions ~ mask * sound + (1 + sound | pid), data = all_measures_per_participant)
+# AIC(lmm_ratio_aoi_transitions2)
+# BIC(lmm_ratio_aoi_transitions2)
+# summary(lmm_ratio_aoi_transitions2)
+# anova(lmm_ratio_aoi_transitions2)
+
+

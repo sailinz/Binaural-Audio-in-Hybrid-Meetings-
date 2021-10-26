@@ -1,0 +1,2 @@
+study_id,item_id,item_filename,tester_id,tester_external_id,tester_display_name,tester_quality_grade,item_question,tester_item_answer,fixation_point_x,fixation_point_y,fixation_starts_at_ms,fixation_ends_at_ms,fixation_duration_ms,notes
+,,dialog1_normal_mask.mp4,,,Anonymous,4,,,53.99801587,49.03643481,519,674,155,RealEye v6.13.28; FixationFilterSettings [gazePointInterpolationHz = 60; gazePointInterpolationMaxGapMs = 50; gazeVelocityThreshold = 21; minFixationDurationMs = 100; noiseReductionLevel = 21]
