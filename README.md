@@ -25,9 +25,9 @@ The folders 1 to 3 contains all the materials used in the user study and consequ
 * In the folder [eyetracking data]: example data (from dialog 1) recorded on realeye.io
 
 * In the folder [eyetracking analysis]: all the files needed for the analysis of the eyetracking data. 
-  [Eye-tracking analysis - Extract fixations]: code to adjust raw fixation data (recorded on realeye.io) with respect to the coordination of video image size. 
-  [Eye-tracking - Analysis.ipynb]: code for the eye-tracking metrics calculation and (visual) analysis
-  [Individual differences analysis.ipynb]: code for preparing consolidated data (from tests, subjective ratings, and eye-tracking metrics) for statistical analysis (in R), preparing data for mHMM model (in R) and calculating the ratio of states (resulted from mHMM model in R).   
+  - [Eye-tracking analysis - Extract fixations]: code to adjust raw fixation data (recorded on realeye.io) with respect to the coordination of video image size. 
+  - [Eye-tracking - Analysis.ipynb]: code for the eye-tracking metrics calculation and (visual) analysis
+  - [Individual differences analysis.ipynb]: code for preparing consolidated data (from tests, subjective ratings, and eye-tracking metrics) for statistical analysis (in R), preparing data for mHMM model (in R) and calculating the ratio of states (resulted from mHMM model in R).   
 * In the folder [mHMM]: R code for the analysis of individual differences using multilevel HMM (mHMM). 
-  [mHMM.R]: mHMM for binaural conditions (x4)
-  [mHMM_mono.R]: mHMM for mono conditions (x2)
+  - [mHMM.R]: mHMM for binaural conditions (x4)
+  - [mHMM_mono.R]: mHMM for mono conditions (x2)
