@@ -1,4 +1,4 @@
-# Binaural-Audio-in-Hybrid-Meetings-
+# Binaural Audio in Hybrid Meetings
 This repository contains files created and used for Loïc Rosset's Master Thesis: Advancing the User Experience of Hybrid Meetings with Binaural Audio (2021) and the extended work from the co-authors from the related papers.
 
 The folders 1 to 3 contains all the materials used in the user study and consequent data analysis. The content of the folders are described here:
@@ -31,3 +31,11 @@ The folders 1 to 3 contains all the materials used in the user study and consequ
 * In the folder [mHMM]: R code for the analysis of individual differences using multilevel HMM (mHMM). 
   - [mHMM.R]: mHMM for binaural conditions (x4)
   - [mHMM_mono.R]: mHMM for mono conditions (x2)
+
+
+## Contact
+Loïc Rosset: https://github.com/LoRosset
+Sailin Zhong: sailin.zhong@unifr.ch 
+
+## Cite this work
+Rosset, L., Alavi, H., Zhong, S., & Lalanne, D. (2021, May). Already It Was Hard to Tell Who’s Speaking Over There, and Now Face Masks! Can Binaural Audio Help Remote Participation in Hybrid Meetings?. In Extended Abstracts of the 2021 CHI Conference on Human Factors in Computing Systems (pp. 1-7).
