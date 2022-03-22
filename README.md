@@ -40,5 +40,5 @@ Sailin Zhong: sailin.zhong@unifr.ch
 ## Cite this work
 Rosset, L., Alavi, H., Zhong, S., & Lalanne, D. (2021, May). Already It Was Hard to Tell Who’s Speaking Over There, and Now Face Masks! Can Binaural Audio Help Remote Participation in Hybrid Meetings?. In Extended Abstracts of the 2021 CHI Conference on Human Factors in Computing Systems (pp. 1-7).
 
-Zhong, S., Rosset, L., Lalanne, D., & Alavi, H., (to be appeared in CSCW 2022). Binaural Audio in Hybrid Meetings: Effects on Speaker Identification, Comprehension, and User Experience. 
+Zhong, S., Rosset, L., Papinutto, M., Lalanne, D., & Alavi, H., (to be appeared in CSCW 2022). Binaural Audio in Hybrid Meetings: Effects on Speaker Identification, Comprehension, and User Experience. 
 
